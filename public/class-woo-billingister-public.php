@@ -101,3 +101,89 @@ class Woo_Billingister_Public {
 	}
 
 }
+
+/**
+ * Add billing fields to register form for WooCommerce.
+ */
+
+// Function to check starting char of a string
+function startsWith($haystack, $needle){
+    return $needle === '' || strpos($haystack, $needle) === 0;
+}
+
+
+// Custom function to display the Billing Address form to registration page
+function wz_add_billing_form_to_registration(){
+    global $woocommerce;
+    $checkout = $woocommerce->checkout();
+    ?>
+    <?php foreach ( $checkout->get_checkout_fields( 'billing' ) as $key => $field ) : ?>
+
+        <?php if($key!='billing_email'){ 
+            woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
+        } ?>
+
+    <?php endforeach; 
+}
+add_action('woocommerce_register_form_start','wz_add_billing_form_to_registration');
+
+// Custom function to save Usermeta or Billing Address of registered user
+function wz_save_billing_address($user_id){
+    global $woocommerce;
+    $address = $_POST;
+    foreach ($address as $key => $field){
+        if(startsWith($key,'billing_')){
+            // Condition to add firstname and last name to user meta table
+            if($key == 'billing_first_name' || $key == 'billing_last_name'){
+                $new_key = explode('billing_',$key);
+                update_user_meta( $user_id, $new_key[1], $_POST[$key] );
+            }
+            update_user_meta( $user_id, $key, $_POST[$key] );
+        }
+    }
+
+}
+add_action('woocommerce_created_customer','wz_save_billing_address');
+
+
+// Registration page billing address form Validation
+function wz_validation_billing_address(){
+    global $woocommerce;
+    $address = $_POST;
+    foreach ($address as $key => $field) :
+        // Validation: Required fields
+        if(startsWith($key,'billing_')){
+            if($key == 'billing_country' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please select a country.', 'woocommerce' ) );
+            }
+            if($key == 'billing_first_name' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter first name.', 'woocommerce' ) );
+            }
+            if($key == 'billing_last_name' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter last name.', 'woocommerce' ) );
+            }
+            if($key == 'billing_address_1' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter address.', 'woocommerce' ) );
+            }
+            if($key == 'billing_city' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter city.', 'woocommerce' ) );
+            }
+            if($key == 'billing_state' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter state.', 'woocommerce' ) );
+            }
+            if($key == 'billing_postcode' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter a postcode.', 'woocommerce' ) );
+            }
+            /*
+            if($key == 'billing_email' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter billing email address.', 'woocommerce' ) );
+            }
+            */
+            if($key == 'billing_phone' && $field == ''){
+                $woocommerce->add_error( '<strong>' . __( 'ERROR', 'woocommerce' ) . '</strong>: ' . __( 'Please enter phone number.', 'woocommerce' ) );
+            }
+
+        }
+    endforeach;
+}
+add_action('register_post','wz_validation_billing_address');
