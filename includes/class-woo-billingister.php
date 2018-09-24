@@ -72,7 +72,7 @@ class Woo_Billingister {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'woo billingister';
+		$this->plugin_name = 'woo-billingister';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -103,24 +103,24 @@ class Woo_Billingister {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo billingister-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo-billingister-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo billingister-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo-billingister-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-woo billingister-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-woo-billingister-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-woo billingister-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-woo-billingister-public.php';
 
 		$this->loader = new Woo_Billingister_Loader();
 
